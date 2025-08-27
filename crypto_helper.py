@@ -6,9 +6,8 @@ from Crypto.Util.Padding import pad
 API_KEY = "vT8tINqHaOxXbGE7eOWAhA=="
 AX_API_SIG_KEY_ASCII = b"18b4d589826af50241177961590e6693"
 
-XDATA_ENCRYPT_URL = "https://myxldecrypt.fuyuki.pw/encrypt"
-XDATA_DECRYPT_URL = "https://myxldecrypt.fuyuki.pw/decrypt"
-XDATA_ENCRYPT_SIGN_URL = "https://myxldecrypt.fuyuki.pw/encryptsign"
+XDATA_DECRYPT_URL = "https://xdata.fuyuki.pw/api/decrypt"
+XDATA_ENCRYPT_SIGN_URL = "https://xdata.fuyuki.pw/api/encryptsign"
 
 AES_KEY_ASCII = "5dccbf08920a5527"
 BLOCK = AES.block_size
@@ -66,6 +65,7 @@ def ax_api_signature(ts_for_sign: str, contact: str, code: str, contact_type: st
     return b64res
     
 def encryptsign_xdata(
+        api_key: str,
         method: str,
         path: str,
         id_token: str,
@@ -73,6 +73,7 @@ def encryptsign_xdata(
     ) -> str:
     headers = {
         "Content-Type": "application/json",
+        "x-api-key": api_key,
     }
     
     request_body = {
@@ -89,12 +90,16 @@ def encryptsign_xdata(
     else:
         raise Exception(f"Encryption failed: {response.text}")
     
-def decrypt_xdata(encrypted_payload: dict) -> dict:
+def decrypt_xdata(
+    api_key: str,
+    encrypted_payload: dict
+    ) -> dict:
     if not isinstance(encrypted_payload, dict) or "xdata" not in encrypted_payload or "xtime" not in encrypted_payload:
         raise ValueError("Invalid encrypted data format. Expected a dictionary with 'xdata' and 'xtime' keys.")
     
     headers = {
         "Content-Type": "application/json",
+        "x-api-key": api_key,
     }
     
     response = requests.request("POST", XDATA_DECRYPT_URL, json=encrypted_payload, headers=headers, timeout=30)
