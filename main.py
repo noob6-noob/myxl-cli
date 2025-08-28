@@ -47,6 +47,10 @@ def main():
             elif choice == "3":
                 # XUT 
                 packages = get_package_xut(api_key, user_data["tokens"])
+                continue
+            elif choice == "4":
+                # spesial 
+                packages = get_package_xut(api_key, user_data["tokens"])    
                 
                 show_package_menu(api_key, user_data["tokens"], packages)
             elif choice == "99":
@@ -60,6 +64,26 @@ def main():
             if choice == "1":
                 phone_number = login_prompt()
                 if phone_number:
+                    user_data["phone_number"] = phone_number
+                    continue
+                else:
+                    print("Failed to login. Please try again.")
+                pause()
+            elif choice == "99":
+                print("Exiting the application.")
+                sys.exit(0)
+            else:
+                print("Invalid choice. Please try again.")
+                pause()
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nExiting the application.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+                    if phone_number:
                     user_data["phone_number"] = phone_number
                     continue
                 else:
